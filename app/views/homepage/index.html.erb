@@ -1,0 +1,153 @@
+<div class="d-flex flex-column">
+
+<div class="w-100 d-flex flex-column align-items-center text-center mt-2" style="height:100px;">
+  <div>
+   <h2 class="text-indigo fw-bold f-base text-30px">PRICING</h2>
+  </div>
+  <div class="w-25 text-center">
+   <p class="text-wrap f-base text-17px">Subscribe in less then 30 seconds. Try out our 7 days risk free trial upgrade at anytime, no question, no hustle.</p>
+  </div>
+
+ 
+</div>
+
+<div class="w-100 d-flex flex-column mx-auto mt-5 align-items-center" >
+  <div class="btn btn-custom" style="font-size:16px;">Popular plan</div>
+</div>
+
+<div class="w-100 d-flex flex-row justify-content-center mt-5" >
+  <div class="card-1 mt-5 d-flex flex-column text-center justify-content-around">
+      <div class="mt-5">
+        <h1 class="text-25px fw-bold" style="font-weight:bold">Free</h1>
+
+        <h2 class="mt-4">$0/month</h2>
+      <div class="d-flex flex-column text-14px mt-5 f-base">
+      <span><i class="fa-solid fa-check "></i> Up to 100 emails per day</span>
+      <span><i class="fa-solid fa-check"></i> Up to 100 emails per day</span>
+      <span><i class="fa-solid fa-check"></i> Up to 100 emails per day</span>
+
+      </div>
+      </div>
+
+      <div class="w-100 d-flex flex-column mx-auto align-items-center" >
+        <button class="btn btn-custom-2 f-base fw-bold" type="button" style="font-size:16px;">Signup</button>
+      </div>
+
+  </div>
+
+  <div class="card-2 d-flex flex-column text-center justify-content-around">
+      <div class="mt-5 f-base">
+        <h1 class="text-25px fw-bold" style="font-weight:bold">Standard</h1>
+
+        <h2 class="mt-4 f-base">$99/month</h2>
+      <div class="d-flex flex-column text-14px mt-5 f-base">
+      <span><i class="fa-solid fa-check "></i> Lorem Ipsum is simply dummy text </span>
+      <span><i class="fa-solid fa-check"></i> Lorem Ipsum is simply dummy text </span>
+      <span><i class="fa-solid fa-check"></i> Lorem Ipsum is simply dummy text </span>
+
+      </div>
+      </div>
+
+      <div class="w-100 d-flex flex-column mx-auto align-items-center f-base" >
+        <button class="btn btn-custom f-base fw-bold" type="button" onclick="showModal()" style="font-size:16px;">Subscribe</button>
+      </div>
+
+
+  </div>
+  <div class="card-1 mt-5 d-flex flex-column text-center justify-content-around">
+      <div class="mt-5">
+        <h1 class="text-25px fw-bold" style="font-weight:bold">Enterprise</h1>
+
+        <h2 class="mt-4">$399/month</h2>
+      <div class="d-flex flex-column text-14px mt-5 f-base">
+      <span><i class="fa-solid fa-check "></i> Up to 100 emails per day</span>
+      <span><i class="fa-solid fa-check"></i> Up to 100 emails per day</span>
+      <span><i class="fa-solid fa-check"></i> Up to 100 emails per day</span>
+
+      </div>
+      </div>
+
+      <div class="w-100 d-flex flex-column mx-auto align-items-center" >
+        <button class="btn btn-custom-2 f-base fw-bold" type="button" style="font-size:16px;" onclick="showModal()">Signup</button>
+      </div>
+
+  </div>
+
+</div>
+
+</div>
+
+
+<div id="paymentModal" class="modal">
+  <div class="modal-content-1">
+  <div class="card-3" style="margin-top:25%">
+    <%= form_tag(payments_path, id: "payment-form") do %>
+      <div class="form-group text-center">
+        <label for="card-element" class="text-17px">
+          Payment Details
+        </label>
+        <div ><input type="text" id="name" name="name" class="form-input" placeholder="Names" class="mt-5" ></div>
+        <div ><input type="text" id="email" name="email" class="form-input mt-4" placeholder="Email"></div>
+        <div id="card-element" class="mt-4">
+        </div>
+        <div id="card-errors" role="alert"></div>
+      </div>
+      <div class="w-100 d-flex flex-column mx-auto align-items-center" >
+        <button class="btn btn-custom f-base fw-bold mt-4" type="submit" style="font-size:16px;">Make Payment</button>
+      </div>
+    <% end %>
+  </div>
+  </div>
+</div>
+
+
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  var stripe = Stripe('pk_test_51MNs51EBYr4Xth1xY8YDuS7LrsjCjO0ox9N8P8wrggjzZEuDVLl3nREMSGdbBs1r97ndEdyQ8KFHcIjn5zy4e6iH006oXdkcHv');
+  var elements = stripe.elements();
+  var cardElement = elements.create('card');
+  cardElement.mount('#card-element');
+
+  var form = document.getElementById('payment-form');
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    stripe.createToken(cardElement).then(function(result) {
+      if (result.error) {
+        var errorElement = document.getElementById('card-errors');
+        errorElement.textContent = result.error.message;
+      } else {
+        stripeTokenHandler(result.token);
+      }
+    });
+  });
+
+  function stripeTokenHandler(token) {
+    var form = document.getElementById('payment-form');
+    var hiddenInput = document.createElement('input');
+    hiddenInput.setAttribute('type', 'hidden');
+    hiddenInput.setAttribute('name', 'stripeToken');
+    hiddenInput.setAttribute('value', token.id);
+    form.appendChild(hiddenInput);
+    form.submit();
+  }
+
+
+
+var modal = document.getElementById("paymentModal");
+
+function showModal() {
+  modal.style.display = "block";
+}
+
+function hideModal() {
+  modal.style.display = "none";
+}
+
+window.onclick = function (event) {
+  if (event.target == modal) {
+    hideModal();
+  }
+}
+</script>
